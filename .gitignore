@@ -1,0 +1,9 @@
+**.pth
+**.npy
+**.mat
+**.pt
+**.pkl
+**.bin
+**.lock
+**Pipfile
+**__pycache__
