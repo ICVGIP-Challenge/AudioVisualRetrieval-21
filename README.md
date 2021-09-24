@@ -1,4 +1,4 @@
-# AudioVisualChallenge-2021
+# Audio-visual Retrieval Challenge-21
 
 ## Problem Description
 Given a query example in one modality (audio/video) the task is to retrieve relevent examples in other modality (video/audio). For every data point, audio and video modality is available along with the class level annotation. The class name can also be considered as the third modality text. The retrieval examples are correct if they are semantically similar to query, i.e. they share same class label as the query.
