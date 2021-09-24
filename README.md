@@ -1,10 +1,10 @@
-# Semantic Cross-Modal Retrieval
+# AudioVisualChallenge-2021
 
 ## Problem Description
 Given a query example in one modality (audio/video) the task is to retrieve relevent examples in other modality (video/audio). For every data point, audio and video modality is available along with the class level annotation. The class name can also be considered as the third modality text. The retrieval examples are correct if they are semantically similar to query, i.e. they share same class label as the query.
 
 ## Dataset Statistics
-[AudiosetZSL](https://github.com/krantiparida/AudioSetZSL) dataset will be used for the task. This dataset is proposed for the task of zero-shot classification and retrieval of videos and is curated from a large dataset, [Audioset](http://research.google.com/audioset/). For this challenge, only the **seen** classes from the dataset will be considered. It contains a total of 79795 training examples and 26587 validation example. Out of the total 26593 testing examples, a subset of it will be used for the final evaluation. We have provided the features for both audio and video, extracted using pre-trained networks. For a fair campariosn of the approach it is mandatory for everyone to use the features provided. More details about the dataset and task can be found in these papers below.
+[AudiosetZSL](https://github.com/krantiparida/AudioSetZSL) dataset will be used for the task. This dataset is proposed for the task of zero-shot classification and retrieval of videos and is curated from a large dataset, [Audioset](http://research.google.com/audioset/). For this challenge, only the **seen** classes from the dataset will be considered. It contains a total of 79795 training examples and 26587 validation example. Out of the total 26593 testing examples, a subset of it will be used for the final evaluation. We have provided the features for both audio and video, extracted using pre-trained networks. For a fair comparison of the approach it is mandatory for everyone to use the features provided. More details about the dataset and task can be found in these papers below.
 1. [Coordinated Joint Multimodal Embeddings](https://arxiv.org/pdf/1910.08732.pdf) 
 2. [Discriminative Semantic Transitive Consistency](https://arxiv.org/abs/2103.14103)
 
@@ -17,7 +17,7 @@ Final mAP = 0.5*(audio2video) + 0.5*(video2audio)
 
 ## Code to get started
 ### Data Download
-1. Download the dataset from this [link]() onto ```data``` folder.
+1. Download the dataset from this [link](https://drive.google.com/drive/folders/1C5c8K0ZkPhzz-RX1qkPgkGejAssSA72v) onto ```data``` folder.
 2. Arrange as per the directory structure given in the ```readme.md``` file inside ```data``` folder.
 ### Run Baselines (Unsupervised)
 Different baseline codes using unsupervised approach are provided to start with.
