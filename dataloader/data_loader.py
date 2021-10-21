@@ -4,25 +4,28 @@ import numpy as np
 from torch.utils.data import Dataset
 from utils.util import parse_all_data
 import pandas
+import h5py
 
-class DatasetAV(Dataset):
-	def __init__(self, root, labels_txt, mode ='trn'):
-		self.audio_data_all, self.video_data_all, self.label_all = parse_all_data(os.path.join(root, 'features'), mode, labels_txt)	
-		self.text_embeddings = np.load(os.path.join(root, 'features/text/word_embeddings-dict-33.npy'), allow_pickle=True).item()
-		self.class_name = labels_txt
-	
+class EvalDatasetAV(Dataset):
+	def __init__(self, root, mode ='val'):
+		path = os.path.join(root, 'features', mode+'.h5')
+		hf = h5py.File(path, 'r')
+		self.audio_data_all, self.video_data_all, self.label_all = hf['audio'][()], hf['video'][()], hf['label'][()]
+		hf.close()
+
 	def __getitem__(self, index):	
 		audio = self.audio_data_all[index]
 		video = self.video_data_all[index]
 		label = self.label_all[index]
-		text = torch.from_numpy(self.text_embeddings[self.class_name[label]])
+		
 
-		data = {'audio':audio, 'video':video, 'text':text, 'label':label}
+		data = {'audio':audio, 'video':video, 'label':label}
 
 		return data
 		
 	def __len__(self):
 		return self.audio_data_all.shape[0]
+
 
 class tripletDatasetAV(Dataset):
 	def __init__(self, root, labels_txt, mode ='trn'):

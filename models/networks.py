@@ -49,3 +49,19 @@ class CombinedNetwork(nn.Module):
 		out['audio'], out['video'], out['text'] = audio_out, video_out, text_out
 
 		return out
+
+
+class CombinedNetworkAV(nn.Module):
+	def __init__(self, audio_net, video_net):
+		super(CombinedNetworkAV, self).__init__()
+		self.audio_net = audio_net
+		self.video_net = video_net
+		
+	def forward(self, input_audio, input_video):
+		audio_out = self.audio_net(input_audio)
+		video_out = self.video_net(input_video)
+		
+		out = {}
+		out['audio'], out['video'] = audio_out, video_out
+
+		return out

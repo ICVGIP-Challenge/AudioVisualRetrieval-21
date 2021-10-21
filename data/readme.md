@@ -7,10 +7,6 @@ Download the dataset into this folder. This should contain two subfolders `featu
 |   |   |   |-- dog.h5
 |   |   |   |-- cat.h5
 |   |   |   |-- ......
-|   |   |-- val
-|   |   |   |-- dog.h5
-|   |   |   |-- cat.h5
-|   |   |   |-- ......
 |   |-- text
 |   |   |-- word_embeddings-dict-33.npy
 |   |-- video
@@ -18,10 +14,7 @@ Download the dataset into this folder. This should contain two subfolders `featu
 |   |   |   |-- dog.h5
 |   |   |   |-- cat.h5
 |   |   |   |-- ......
-|   |   |-- val
-|   |   |   |-- dog.h5
-|   |   |   |-- cat.h5
-|   |   |   |-- ......
+|   |-- val.h5
 |-- class-split
 |   |-- all_class.txt
 |   |-- seen_class.txt

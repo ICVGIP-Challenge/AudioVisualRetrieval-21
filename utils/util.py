@@ -80,7 +80,9 @@ def calculate_precision_map(dist, labels, start_idx, end_idx, k_val=[1, 5, 10], 
 	num_rel = matches.sum(1).float()
 
 	tmp_prcsn = matches.cumsum(1).float()
-	norm_div = torch.Tensor([i+1 for i in range(tmp_prcsn.shape[1])]).cuda()
+	norm_div = torch.Tensor([i+1 for i in range(tmp_prcsn.shape[1])])
+	if tmp_prcsn.is_cuda:
+		norm_div = norm_div.cuda()
 	tmp_prcsn = torch.div(tmp_prcsn, norm_div)
 	precision = {}
 
@@ -148,7 +150,7 @@ def calculate_classwise_metric(metric, label):
 
 	return torch.mean(metric_norm)
 
-def calculate_both_map(audio_val, video_val, label_val, gpu=True, batchSizeEval = 4, out_txt=False):
+def calculate_both_map(audio_val, video_val, label_val, gpu=False, batchSizeEval = 4, out_txt=False):
 	'''
 	find the average of audio2video and video2audio retrieval
 	
@@ -170,10 +172,8 @@ def calculate_both_map(audio_val, video_val, label_val, gpu=True, batchSizeEval 
 	map_aud2vid_all = []
 	map_vid2aud_all = []
 	if out_txt:
-		path_aud2vid = './aud2vid.txt'
-		path_vid2aud = './vid2aud.txt'
-		file_aud2vid = open(path_aud2vid, 'w')
-		file_vid2aud = open(path_vid2aud, 'w')
+		path = './res.txt'
+		file_res = open(path, 'w')
 	for i in range(0, Ndata, batchSizeEval):
 		startidx = i
 		endidx = startidx+batchSizeEval
@@ -183,22 +183,28 @@ def calculate_both_map(audio_val, video_val, label_val, gpu=True, batchSizeEval 
 		## audio to video retrieval
 		dist_aud2vid = calculate_distance(audio_val[startidx:endidx], video_val)
 		if out_txt:
-			write_txt(file_aud2vid, dist_aud2vid, label_val, startidx, endidx, gpu)
+			write_txt(file_res, dist_aud2vid, label_val, startidx, endidx, gpu)
 		_, map_aud2vid = calculate_precision_map(dist_aud2vid, label_val, startidx, endidx)
 		if gpu:
-			map_aud2vid_all += map_aud2vid.cpu()
+			map_aud2vid_all += list(map_aud2vid.cpu())
 		else:
-			map_aud2vid_all += map_aud2vid
+			map_aud2vid_all += list(map_aud2vid)
+
+	for i in range(0, Ndata, batchSizeEval):
+		startidx = i
+		endidx = startidx+batchSizeEval
+		if endidx > Ndata:
+			endidx = Ndata
 
 		## video to audio retrieval
 		dist_vid2aud = calculate_distance(video_val[startidx:endidx], audio_val)
 		if out_txt:
-			write_txt(file_vid2aud, dist_vid2aud, label_val, startidx, endidx, gpu)
+			write_txt(file_res, dist_vid2aud, label_val, startidx, endidx, gpu)
 		_, map_vid2aud = calculate_precision_map(dist_vid2aud, label_val, startidx, endidx)
 		if gpu:
-			map_vid2aud_all += map_vid2aud.cpu()
+			map_vid2aud_all += list(map_vid2aud.cpu())
 		else:
-			map_vid2aud_all += map_vid2aud
+			map_vid2aud_all += list(map_vid2aud)
 
 	AvgMAP = {}
 	
@@ -207,22 +213,20 @@ def calculate_both_map(audio_val, video_val, label_val, gpu=True, batchSizeEval 
 	AvgMAP['avg'] = 0.5*(AvgMAP['aud2vid'] + AvgMAP['vid2aud'])
 	
 	if out_txt:
-		file_aud2vid.close()
-		file_vid2aud.close()
-
+		file_res.close()
+		
 	return AvgMAP
 
 def write_txt(file, dist, label, start_idx, end_idx, gpu):
 	if dist.shape[1] != label.shape[0]:
 		raise ValueError('Dimensions are not correct....')
 	index = torch.argsort(dist, dim=1)
-	labels_to_write = torch.cat((label[start_idx:end_idx].unsqueeze(1), label[index]), 1)
 
 	if gpu:
-		labels_to_write = labels_to_write.cpu()
+		index = index.cpu()
 
 	for i in range(start_idx, end_idx):
-		str_to_write = ','.join(str(i) for i in labels_to_write[i-start_idx].tolist())+'\n'
+		str_to_write = ','.join(str(int(i)) for i in index[i-start_idx].tolist())+'\n'
 		file.write(str_to_write)
 	
 

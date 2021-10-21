@@ -7,3 +7,12 @@
 **.lock
 **Pipfile
 **__pycache__
+**checkpoints
+**class-split
+**features
+**triplet_split
+**.h5
+**res.txt
+data/**
+**evaluate_txt.py
+

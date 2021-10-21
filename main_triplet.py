@@ -3,7 +3,7 @@ import torch.nn.functional as F
 import torch.nn as nn
 import argparse
 import os
-from dataloader.data_loader import tripletDatasetAV, DatasetAV
+from dataloader.data_loader import tripletDatasetAV, EvalDatasetAV
 from torch.utils.data import DataLoader 
 from utils.util import parse_all_data, calculate_both_map, AverageMeter, ProgressMeter
 from models.networks import build_network, CombinedNetwork
@@ -45,6 +45,7 @@ parser.add_argument('-lc', '--lambda-c', dest='lambda_c', default=1.0, type=floa
 def main():
 	args = parser.parse_args()
 	args.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+	args.gpu = torch.cuda.is_available()
 
 	## parameters
 	file = open(os.path.join(args.path, 'class-split/seen_class.txt'), 'r')
@@ -57,7 +58,7 @@ def main():
 	## dataloader
 	# for loading the dataset 
 	dataset_trn = tripletDatasetAV(args.path, class_labels, mode ='trn')
-	dataset_val = DatasetAV(args.path, class_labels, mode ='val')
+	dataset_val = EvalDatasetAV(args.path, mode ='val')
 
 	dataloader_trn = DataLoader(dataset_trn, batch_size=args.batch_size, shuffle=True, num_workers=args.workers)
 	dataloader_val = DataLoader(dataset_val, batch_size=args.batch_size, shuffle=False, num_workers=args.workers)
@@ -166,18 +167,15 @@ def validate(val_loader, model, args):
 		for i, data in enumerate(val_loader):
 			audio = data['audio'].to(args.device) 
 			video = data['video'].to(args.device)
-			text = data['text'].to(args.device)
+			text = torch.zeros(audio.shape[0], 300).to(args.device) ## dummy text features 
 			label = data['label'].to(args.device)
 
 			if args.normalize:
 				audio = F.normalize(audio, p=2, dim=1)
 				video = F.normalize(video, p=2, dim=1) 
-				text = F.normalize(text, p=2, dim=1)
 				
 			# Perfrom forward pass and compute the output
-			out = model(audio, video, text)
-			# import pdb; pdb.set_trace()
-			
+			out = model(audio, video, text)			
 			if args.cosine:
 				out['audio'], out['video'] = F.normalize(out['audio'], p=2, dim=1), F.normalize(out['video'], p=2, dim=1)
  
@@ -187,7 +185,7 @@ def validate(val_loader, model, args):
 
 		audioAll, videoAll, labelAll = torch.cat(audioAll, dim=0), torch.cat(videoAll, dim=0), torch.cat(labelAll, dim=0)	
 		# measure retrieval map
-		AvgMap = calculate_both_map(audioAll, videoAll, labelAll)
+		AvgMap = calculate_both_map(audioAll, videoAll, labelAll, gpu=args.gpu)
 		
 		print('aud2vid:{}\tvid2aud:{}\tAvg:{}'.format(AvgMap['aud2vid'], AvgMap['vid2aud'], AvgMap['avg']))
 
