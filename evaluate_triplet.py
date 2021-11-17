@@ -33,7 +33,7 @@ def main():
 	arch_text = [300, 256]
 
 	## dataloader
-	dataset_val = EvalDatasetAV(args.path, mode ='test_with_shuffle_label')
+	dataset_val = EvalDatasetAV(args.path, mode ='val')
 	dataloader_val = DataLoader(dataset_val, batch_size=args.batch_size, shuffle=False, num_workers=args.workers)
 
 	
