@@ -17,7 +17,7 @@ Final mAP = 0.5*(audio2video) + 0.5*(video2audio)
 
 ## Code to get started
 ### Data Download
-1. Download the dataset from this [link](https://drive.google.com/drive/folders/1C5c8K0ZkPhzz-RX1qkPgkGejAssSA72v) onto ```data``` folder.
+1. Download the dataset from this [link](https://drive.google.com/drive/u/3/folders/1UNTOyfbqtsrwr1wHYJMln1r8JlL-cl9w) onto ```data``` folder.
 2. Arrange as per the directory structure given in the ```readme.md``` file inside ```data``` folder.
 ### Run Baselines (Unsupervised)
 Different baseline codes using unsupervised approach are provided to start with.
